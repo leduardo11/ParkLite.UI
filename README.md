@@ -44,4 +44,5 @@ This is a **kiosk-grade native UI**, ideal for:
 ## 📁 Run It
 
 ```bash
-dotnet run --project src/ParkLite.Api
+dotnet run --project src/ParkLite.API
+dotnet run --project src/ParkLite.UI
