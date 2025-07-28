@@ -12,10 +12,12 @@ namespace ParkLite.UI
 		public string[,] Data { get; private set; }
 		public int TextSize { get; private set; }
 
-		private readonly float[] _columnWidths;
-		private readonly float _cellHeight;
-		private readonly Color[,] _textColors;
-		private readonly Color[,] _bgColors;
+		private float[] _columnWidths;
+		private float _cellHeight;
+		private Color[,] _textColors;
+		private Color[,] _bgColors;
+
+		private const float MinColumnWidth = 40.0f;
 
 		public Table(Rectangle bounds, int rows, int columns, int textSize = Constants.DefaultTextSize)
 		{
@@ -38,7 +40,8 @@ namespace ParkLite.UI
 		{
 			for (int col = 0; col < Columns; col++)
 			{
-				float maxWidth = 0;
+				float maxWidth = MinColumnWidth;
+
 				for (int row = 0; row < Rows; row++)
 				{
 					string text = Data[row, col] ?? "";
@@ -67,6 +70,45 @@ namespace ParkLite.UI
 				Data[row, column] = text;
 		}
 
+		public void SetData<T>(IList<T> items, string[] columns, Func<T, object>[] selectors)
+		{
+			Rows = items.Count + 1;
+			Columns = columns.Length;
+
+			UpdateDimensions();
+
+			Data = new string[Rows, Columns];
+			_textColors = new Color[Rows, Columns];
+			_bgColors = new Color[Rows, Columns];
+
+			for (int c = 0; c < Columns; c++)
+				Data[0, c] = columns[c];
+
+			for (int r = 0; r < items.Count; r++)
+				for (int c = 0; c < Columns; c++)
+					Data[r + 1, c] = selectors[c](items[r])?.ToString() ?? "";
+
+			InitDefaultCellColors(Constants.ButtonTextColor, Color.Blank);
+			CalculateColumnWidths();
+		}
+
+		public bool IsCellClicked(int row, int col, Vector2 mousePosition)
+		{
+			if (row < 0 || row >= Rows || col < 0 || col >= Columns)
+				return false;
+
+			float y = Bounds.Y + row * _cellHeight;
+			float x = Bounds.X;
+
+			for (int i = 0; i < col; i++)
+				x += _columnWidths[i];
+
+			float width = _columnWidths[col];
+			var cellRect = new Rectangle(x, y, width, _cellHeight);
+
+			return Raylib.CheckCollisionPointRec(mousePosition, cellRect);
+		}
+
 		public void Update()
 		{
 		}
@@ -84,15 +126,16 @@ namespace ParkLite.UI
 					float width = _columnWidths[col];
 					var cellBounds = new Rectangle(x, y, width, _cellHeight);
 
+					// Draw background first
 					if (row == 0)
 						Raylib.DrawRectangleRec(cellBounds, Constants.TableHeaderColor);
+					else if (_bgColors[row, col].A > 0)
+						Raylib.DrawRectangleRec(cellBounds, _bgColors[row, col]);
 
+					// Draw cell border
 					Raylib.DrawRectangleLinesEx(cellBounds, 1, Constants.GridLineColor);
 
-					if (_bgColors[row, col].A > 0 || row == 0)
-						Raylib.DrawRectangleRec(cellBounds, row == 0 ? Constants.TableHeaderColor : _bgColors[row, col]);
-
-					Raylib.DrawRectangleLinesEx(cellBounds, 1, Constants.GridLineColor);
+					// Draw text centered
 					TextUtils.DrawCenteredText(Data[row, col] ?? "", cellBounds, TextSize, _textColors[row, col]);
 
 					x += width;
@@ -115,6 +158,12 @@ namespace ParkLite.UI
 					_textColors[row, col] = textColor;
 					_bgColors[row, col] = bgColor;
 				}
+		}
+
+		private void UpdateDimensions()
+		{
+			_columnWidths = new float[Columns];
+			_cellHeight = Bounds.Height / Rows;
 		}
 	}
 }
