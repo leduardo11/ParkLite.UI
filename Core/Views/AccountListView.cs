@@ -38,6 +38,7 @@ namespace ParkLite.UI.Core.Views
 		private Table BuildAccountTable()
 		{
 			var columns = new[] { "ID", "Name", "Contacts", "Vehicles", "Actions" };
+			int actionsColIndex = Array.IndexOf(columns, "Actions");
 
 			Func<Account, object>[] selectors =
 			[
@@ -45,16 +46,14 @@ namespace ParkLite.UI.Core.Views
 				a => a.Name,
 				a => a.ContactCount,
 				a => a.VehicleCount,
-				a => "[View]"
+				a => "[View] [Edit] [Delete]"
 			];
 
 			var table = Table.CreateDefaultTable(new Vector2(100, 90), new Vector2(600, 400), 1, columns.Length);
 			table.SetData(_accounts, columns, selectors);
 
 			for (int row = 1; row < table.Rows; row++)
-				table.SetCellTextColor(row, 4, Color.Blue);
-
-			// TODO: Add click detection on "Actions" column for each row to open detail view
+				table.SetCellTextColor(row, actionsColIndex, Color.Blue);
 
 			return table;
 		}
@@ -64,18 +63,26 @@ namespace ParkLite.UI.Core.Views
 			_addAccountBtn.Update();
 			_accountTable.Update();
 
-			// Detect clicks on [View] action cells (column 4)
 			var mousePos = Raylib.GetMousePosition();
+			int actionsColIndex = Array.IndexOf(_accountTable.GetColumns(), "Actions");
+
+
 			if (Raylib.IsMouseButtonPressed(MouseButton.Left))
 			{
 				for (int row = 1; row < _accountTable.Rows; row++)
 				{
-					if (_accountTable.IsCellClicked(row, 4, mousePos))
+					var cellRect = _accountTable.GetCellRect(row, actionsColIndex);
+					if (Raylib.CheckCollisionPointRec(mousePos, cellRect))
 					{
-						var selectedAccount = _accounts[row - 1];
-						// Switch to detail view for selectedAccount
-						Console.WriteLine($"View clicked for account {selectedAccount.Name}");
-						// _app.SwitchView(new AccountDetailView(_app, selectedAccount));
+						var selected = _accounts[row - 1];
+						float relativeX = mousePos.X - cellRect.X;
+
+						if (relativeX < 60)
+							Console.WriteLine($"[View] clicked for {selected.Name}");
+						else if (relativeX < 120)
+							Console.WriteLine($"[Edit] clicked for {selected.Name}");
+						else
+							Console.WriteLine($"[Delete] clicked for {selected.Name}");
 					}
 				}
 			}

@@ -36,6 +36,29 @@ namespace ParkLite.UI.Widgets
 			CalculateColumnWidths();
 		}
 
+		public Rectangle GetCellRect(int row, int col)
+		{
+			float x = Bounds.X;
+			for (int i = 0; i < col; i++)
+				x += _columnWidths[i];
+
+			float y = Bounds.Y + row * _cellHeight;
+			float width = _columnWidths[col];
+
+			return new Rectangle(x, y, width, _cellHeight);
+		}
+
+		public string[] GetColumns()
+		{
+			if (Rows == 0) return [];
+			var result = new string[Columns];
+
+			for (int c = 0; c < Columns; c++)
+				result[c] = Data[0, c];
+
+			return result;
+		}
+
 		public void CalculateColumnWidths()
 		{
 			for (int col = 0; col < Columns; col++)
