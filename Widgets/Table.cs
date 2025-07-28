@@ -149,16 +149,14 @@ namespace ParkLite.UI.Widgets
 					float width = _columnWidths[col];
 					var cellBounds = new Rectangle(x, y, width, _cellHeight);
 
-					// Draw background first
 					if (row == 0)
 						Raylib.DrawRectangleRec(cellBounds, Constants.TableHeaderColor);
 					else if (_bgColors[row, col].A > 0)
 						Raylib.DrawRectangleRec(cellBounds, _bgColors[row, col]);
 
-					// Draw cell border
-					Raylib.DrawRectangleLinesEx(cellBounds, 1, Constants.GridLineColor);
+					DrawHoverOverlay(cellBounds);
 
-					// Draw text centered
+					Raylib.DrawRectangleLinesEx(cellBounds, 1, Constants.GridLineColor);
 					TextUtils.DrawCenteredText(Data[row, col] ?? "", cellBounds, TextSize, _textColors[row, col]);
 
 					x += width;
@@ -187,6 +185,16 @@ namespace ParkLite.UI.Widgets
 		{
 			_columnWidths = new float[Columns];
 			_cellHeight = Bounds.Height / Rows;
+		}
+
+		private static void DrawHoverOverlay(Rectangle cellBounds)
+		{
+			var mousePos = Raylib.GetMousePosition();
+
+			if (Raylib.CheckCollisionPointRec(mousePos, cellBounds))
+			{
+				Raylib.DrawRectangleRec(cellBounds, Constants.HoverOverlayColor);
+			}
 		}
 	}
 }

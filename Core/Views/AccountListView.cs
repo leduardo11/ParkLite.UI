@@ -13,11 +13,11 @@ namespace ParkLite.UI.Core.Views
 
 		private record Account(int Id, string Name, int ContactCount, int VehicleCount);
 		private readonly List<Account> _accounts =
-			[
-				new(1, "Alice Family", 2, 1),
-				new(2, "Bob Family", 3, 2),
-				new(3, "Charlie Clan", 1, 3),
-			];
+		[
+			new(1, "Alice Family", 2, 1),
+			new(2, "Bob Family", 3, 2),
+			new(3, "Charlie Clan", 1, 3),
+		];
 
 		public Rectangle Bounds => new(0, 0, Constants.ScreenWidth, Constants.ScreenHeight);
 
@@ -37,8 +37,7 @@ namespace ParkLite.UI.Core.Views
 
 		private Table BuildAccountTable()
 		{
-			var columns = new[] { "ID", "Name", "Contacts", "Vehicles", "Actions" };
-			int actionsColIndex = Array.IndexOf(columns, "Actions");
+			var columns = new[] { "ID", "Name", "Contacts", "Vehicles", "View", "Edit", "Delete" };
 
 			Func<Account, object>[] selectors =
 			[
@@ -46,14 +45,20 @@ namespace ParkLite.UI.Core.Views
 				a => a.Name,
 				a => a.ContactCount,
 				a => a.VehicleCount,
-				a => "[View] [Edit] [Delete]"
+				a => "[View]",
+				a => "[Edit]",
+				a => "[Delete]"
 			];
 
 			var table = Table.CreateDefaultTable(new Vector2(100, 90), new Vector2(600, 400), 1, columns.Length);
 			table.SetData(_accounts, columns, selectors);
 
 			for (int row = 1; row < table.Rows; row++)
-				table.SetCellTextColor(row, actionsColIndex, Color.Blue);
+			{
+				table.SetCellTextColor(row, 4, Color.Green);
+				table.SetCellTextColor(row, 5, Color.Orange);
+				table.SetCellTextColor(row, 6, Color.Red);
+			}
 
 			return table;
 		}
@@ -64,26 +69,19 @@ namespace ParkLite.UI.Core.Views
 			_accountTable.Update();
 
 			var mousePos = Raylib.GetMousePosition();
-			int actionsColIndex = Array.IndexOf(_accountTable.GetColumns(), "Actions");
-
 
 			if (Raylib.IsMouseButtonPressed(MouseButton.Left))
 			{
 				for (int row = 1; row < _accountTable.Rows; row++)
 				{
-					var cellRect = _accountTable.GetCellRect(row, actionsColIndex);
-					if (Raylib.CheckCollisionPointRec(mousePos, cellRect))
-					{
-						var selected = _accounts[row - 1];
-						float relativeX = mousePos.X - cellRect.X;
+					var selected = _accounts[row - 1];
 
-						if (relativeX < 60)
-							Console.WriteLine($"[View] clicked for {selected.Name}");
-						else if (relativeX < 120)
-							Console.WriteLine($"[Edit] clicked for {selected.Name}");
-						else
-							Console.WriteLine($"[Delete] clicked for {selected.Name}");
-					}
+					if (_accountTable.IsCellClicked(row, 4, mousePos))
+						Console.WriteLine($"[View] clicked for {selected.Name}");
+					else if (_accountTable.IsCellClicked(row, 5, mousePos))
+						Console.WriteLine($"[Edit] clicked for {selected.Name}");
+					else if (_accountTable.IsCellClicked(row, 6, mousePos))
+						Console.WriteLine($"[Delete] clicked for {selected.Name}");
 				}
 			}
 		}

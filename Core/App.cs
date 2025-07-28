@@ -1,6 +1,7 @@
 using Raylib_cs;
 using ParkLite.UI.Core.Views;
 using ParkLite.UI.Interfaces;
+using ParkLite.UI.Widgets;
 
 namespace ParkLite.UI.Core
 {
@@ -12,6 +13,9 @@ namespace ParkLite.UI.Core
 		{
 			Raylib.InitWindow(Constants.ScreenWidth, Constants.ScreenHeight, Constants.ScreenTitle);
 			Raylib.SetTargetFPS(Constants.TargetFPS);
+
+			Raylib.InitAudioDevice();
+			Button.LoadClickSound(Constants.ClickSoundPath);
 
 			_currentView = new AccountListView(this);
 		}
@@ -28,6 +32,8 @@ namespace ParkLite.UI.Core
 				Raylib.EndDrawing();
 			}
 
+			Button.UnloadClickSound();
+			Raylib.CloseAudioDevice();
 			Raylib.CloseWindow();
 		}
 

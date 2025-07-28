@@ -14,6 +14,19 @@ namespace ParkLite.UI.Widgets
 		public bool IsPressed { get; private set; }
 		public object? Tag { get; private set; }
 
+		private static Sound? _clickSound;
+
+		public static void LoadClickSound(string path)
+		{
+			_clickSound = Raylib.LoadSound(path);
+		}
+
+		public static void UnloadClickSound()
+		{
+			if (_clickSound is not null)
+				Raylib.UnloadSound(_clickSound.Value);
+		}
+
 		private Button(Rectangle bounds, string text, Action<Button>? onClick, int textSize, object? tag)
 		{
 			Bounds = bounds;
@@ -31,6 +44,8 @@ namespace ParkLite.UI.Widgets
 
 			if (IsHovered && Raylib.IsMouseButtonReleased(MouseButton.Left))
 			{
+				if (_clickSound is not null)
+					Raylib.PlaySound(_clickSound.Value);
 				OnClick?.Invoke(this);
 			}
 		}
