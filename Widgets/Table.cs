@@ -1,8 +1,8 @@
 using System.Numerics;
-using ParkLite.Interfaces;
+using ParkLite.UI.Interfaces;
 using Raylib_cs;
 
-namespace ParkLite.UI
+namespace ParkLite.UI.Widgets
 {
 	public class Table : IObject
 	{

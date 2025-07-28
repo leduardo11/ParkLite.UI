@@ -1,7 +1,12 @@
 using Raylib_cs;
 
-namespace ParkLite
+namespace ParkLite.UI
 {
+	public static class ColorPalette
+	{
+		public static Color DarkCustomGray => new(40, 40, 40, 255);
+	}
+
 	public static class Constants
 	{
 		public const int ScreenWidth = 800;
@@ -17,10 +22,10 @@ namespace ParkLite
 
 		public static readonly Color ButtonColorNormal = Color.Gray;
 		public static readonly Color ButtonColorHover = Color.DarkGray;
-		public static readonly Color ButtonColorPressed = new(40, 40, 40, 255);
+		public static readonly Color ButtonColorPressed = ColorPalette.DarkCustomGray;
 		public static readonly Color ButtonTextColor = Color.RayWhite;
 		public static readonly Color CaretColor = Color.RayWhite;
 		public static readonly Color GridLineColor = Color.RayWhite;
-		public static readonly Color TableHeaderColor = new(40, 40, 40, 255);
+		public static readonly Color TableHeaderColor = ColorPalette.DarkCustomGray;
 	}
 }

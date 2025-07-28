@@ -1,6 +1,6 @@
 using Raylib_cs;
 
-namespace ParkLite.Interfaces
+namespace ParkLite.UI.Interfaces
 {
 	public interface IObject
 	{

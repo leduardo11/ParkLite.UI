@@ -1,8 +1,8 @@
 using Raylib_cs;
-using ParkLite.Interfaces;
-using ParkLite.Core.Views;
+using ParkLite.UI.Core.Views;
+using ParkLite.UI.Interfaces;
 
-namespace ParkLite.Core
+namespace ParkLite.UI.Core
 {
 	public class App
 	{

@@ -1,6 +1,6 @@
 using Raylib_cs;
 
-namespace ParkLite.UI
+namespace ParkLite.UI.Widgets
 {
 	public static class TextUtils
 	{

@@ -1,9 +1,9 @@
 using System.Numerics;
 using Raylib_cs;
-using ParkLite.Interfaces;
-using ParkLite.UI;
+using ParkLite.UI.Interfaces;
+using ParkLite.UI.Widgets;
 
-namespace ParkLite.Core.Views
+namespace ParkLite.UI.Core.Views
 {
 	public class AccountListView : IObject
 	{
