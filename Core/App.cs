@@ -12,8 +12,8 @@ namespace ParkLite.UI.Core
 		public App()
 		{
 			Raylib.InitWindow(Constants.ScreenWidth, Constants.ScreenHeight, Constants.ScreenTitle);
+			Raylib.SetWindowState(ConfigFlags.ResizableWindow);
 			Raylib.SetTargetFPS(Constants.TargetFPS);
-
 			Raylib.InitAudioDevice();
 			Button.LoadClickSound(Constants.ClickSoundPath);
 
@@ -27,8 +27,16 @@ namespace ParkLite.UI.Core
 				_currentView.Update();
 
 				Raylib.BeginDrawing();
+
 				Raylib.ClearBackground(Color.Black);
+				Raylib.DrawRectangleLines(
+				Constants.LineOffset,
+				Constants.LineOffset,
+				Raylib.GetScreenWidth() - Constants.LineOffset * 2,
+				Raylib.GetScreenHeight() - Constants.LineOffset * 2,
+				Color.RayWhite);
 				_currentView.Draw();
+
 				Raylib.EndDrawing();
 			}
 

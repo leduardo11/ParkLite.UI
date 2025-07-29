@@ -10,8 +10,8 @@ namespace ParkLite.UI
 
 	public static class Constants
 	{
-		public const int ScreenWidth = 800;
-		public const int ScreenHeight = 600;
+		public const int ScreenWidth = 1200;
+		public const int ScreenHeight = 900;
 		public const int TargetFPS = 60;
 		public const int DefaultTextSize = 20;
 		public const int TextInputPadding = 5;
