@@ -27,7 +27,7 @@ namespace ParkLite.UI.Widgets
 				Raylib.UnloadSound(_clickSound.Value);
 		}
 
-		private Button(Rectangle bounds, string text, Action<Button>? onClick, int textSize, object? tag)
+		private Button(string text, Rectangle bounds, Action<Button>? onClick, int textSize, object? tag)
 		{
 			Bounds = bounds;
 			Text = text;
@@ -85,16 +85,17 @@ namespace ParkLite.UI.Widgets
 		}
 
 		public static Button CreateDefaultBtn(
-			Vector2 position,
-			Vector2 size,
 			string text,
+			Vector2 position,
+			Vector2? size = null,
 			Action<Button>? onClick = null,
 			int textSize = Constants.DefaultTextSize,
 			object? tag = null
 		)
 		{
-			var bounds = new Rectangle(position.X, position.Y, size.X, size.Y);
-			return new Button(bounds, text, onClick, textSize, tag);
+			var btnSize = size ?? new Vector2(Constants.DefaultButtonWidth, Constants.DefaultButtonHeight);
+			var bounds = new Rectangle(position.X, position.Y, btnSize.X, btnSize.Y);
+			return new Button(text, bounds, onClick, textSize, tag);
 		}
 	}
 }

@@ -26,9 +26,9 @@ namespace ParkLite.UI.Core.Views
 			_app = app;
 
 			_addAccountBtn = Button.CreateDefaultBtn(
+				"Add Account",
 				new Vector2(100, 30),
 				new Vector2(120, 50),
-				"Add Account",
 				btn => Console.WriteLine("Add Account Clicked") // TODO: Switch to AccountDetailView with new account
 			);
 

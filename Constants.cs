@@ -20,6 +20,9 @@ namespace ParkLite.UI
 		public const int LineOffset = 5;
 
 		public const float MinColumnWidth = 40.0f;
+		public const float DefaultButtonWidth = 120.0f;
+		public const float DefaultButtonHeight = 50.0f;
+
 
 		public const string ScreenTitle = "ParkLiteUI";
 		public const string ClickSoundPath = "Assets/Sounds/click.wav";
