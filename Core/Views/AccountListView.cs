@@ -88,7 +88,7 @@ namespace ParkLite.UI.Core.Views
 
 		public void Draw()
 		{
-			Raylib.DrawText("Parking Accounts", 250, 10, 20, Color.White);
+			Raylib.DrawText("Parking Accounts", 250, 10, 20, Color.RayWhite);
 			_addAccountBtn.Draw();
 			_accountTable.Draw();
 		}

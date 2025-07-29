@@ -19,6 +19,8 @@ namespace ParkLite.UI
 		public const int TextOffset = 3;
 		public const int LineOffset = 5;
 
+		public const float MinColumnWidth = 40.0f;
+
 		public const string ScreenTitle = "ParkLiteUI";
 		public const string ClickSoundPath = "Assets/Sounds/click.wav";
 
