@@ -1,3 +1,5 @@
+using System.Numerics;
+using ParkLite.UI.Interfaces;
 using Raylib_cs;
 
 namespace ParkLite.UI.Widgets
@@ -102,5 +104,11 @@ namespace ParkLite.UI.Widgets
 
 			Raylib.DrawText(text, textX, textY, textSize, color);
 		}
+	}
+
+	public static class ObjectExtensions
+	{
+		public static bool HitTest(this IObject obj, Vector2 point)
+			=> Raylib.CheckCollisionPointRec(point, obj.Bounds);
 	}
 }

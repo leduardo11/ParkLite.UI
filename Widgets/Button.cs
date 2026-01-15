@@ -4,7 +4,7 @@ using Raylib_cs;
 
 namespace ParkLite.UI.Widgets
 {
-	public class Button : IObject
+	public class Button : IWidget
 	{
 		public Rectangle Bounds { get; private set; }
 		public string Text { get; set; } = string.Empty;
@@ -13,6 +13,9 @@ namespace ParkLite.UI.Widgets
 		public bool IsHovered { get; private set; }
 		public bool IsPressed { get; private set; }
 		public object? Tag { get; private set; }
+
+		public bool Enabled { get; set; } = true;
+		public bool Visible { get; set; } = true;
 
 		private static Sound? _clickSound;
 
@@ -24,7 +27,10 @@ namespace ParkLite.UI.Widgets
 		public static void UnloadClickSound()
 		{
 			if (_clickSound is not null)
+			{
 				Raylib.UnloadSound(_clickSound.Value);
+				_clickSound = null;
+			}
 		}
 
 		private Button(string text, Rectangle bounds, Action<Button>? onClick, int textSize, object? tag)
@@ -38,50 +44,72 @@ namespace ParkLite.UI.Widgets
 
 		public void Update()
 		{
+			if (!Enabled || !Visible)
+			{
+				IsHovered = false;
+				IsPressed = false;
+				return;
+			}
+
 			var mousePosition = Raylib.GetMousePosition();
-			IsHovered = Raylib.CheckCollisionPointRec(mousePosition, Bounds);
+
+			IsHovered = this.HitTest(mousePosition);
 			IsPressed = IsHovered && Raylib.IsMouseButtonDown(MouseButton.Left);
 
 			if (IsHovered && Raylib.IsMouseButtonReleased(MouseButton.Left))
 			{
 				if (_clickSound is not null)
 					Raylib.PlaySound(_clickSound.Value);
+
 				OnClick?.Invoke(this);
 			}
 		}
 
 		public void Draw()
 		{
-			Color bg = Constants.ButtonColorNormal;
+			if (!Visible)
+				return;
 
-			if (IsPressed)
-				bg = Constants.ButtonColorPressed;
-			else if (IsHovered)
-				bg = Constants.ButtonColorHover;
+			var bg =
+				IsPressed ? Constants.ButtonColorPressed :
+				IsHovered ? Constants.ButtonColorHover :
+				Constants.ButtonColorNormal;
 
 			Raylib.DrawRectangleRec(Bounds, bg);
 
-			//Small shaking effect for clicking
+			// Small shaking effect for clicking
 			int offset = IsPressed ? Constants.TextOffset : 0;
 
-			var textLines = TextUtils.BreakTextInTwo(Text, TextSize, Bounds.Width);
+			var lines = TextUtils.BreakTextInTwo(Text, TextSize, Bounds.Width);
+			DrawCenteredOneOrTwoLines(lines[0], lines[1], Bounds, TextSize, Constants.ButtonTextColor, offset);
+		}
 
-			if (string.IsNullOrEmpty(textLines[1]))
+		private static void DrawCenteredOneOrTwoLines(
+			string line1,
+			string line2,
+			Rectangle bounds,
+			int textSize,
+			Color color,
+			int yOffset = 0
+		)
+		{
+			if (string.IsNullOrEmpty(line2))
 			{
-				TextUtils.DrawCenteredText(textLines[0], Bounds, TextSize, Constants.ButtonTextColor, offset);
+				TextUtils.DrawCenteredText(line1, bounds, textSize, color, yOffset);
+				return;
 			}
-			else
-			{
-				int totalHeight = TextSize * 2;
-				int textY = (int)(Bounds.Y + (Bounds.Height - totalHeight) / 2) + offset;
-				int line1Width = Raylib.MeasureText(textLines[0], TextSize);
-				int line2Width = Raylib.MeasureText(textLines[1], TextSize);
-				int line1X = (int)(Bounds.X + (Bounds.Width - line1Width) / 2);
-				int line2X = (int)(Bounds.X + (Bounds.Width - line2Width) / 2);
 
-				Raylib.DrawText(textLines[0], line1X, textY, TextSize, Constants.ButtonTextColor);
-				Raylib.DrawText(textLines[1], line2X, textY + TextSize, TextSize, Constants.ButtonTextColor);
-			}
+			int totalHeight = textSize * 2;
+			int startY = (int)(bounds.Y + (bounds.Height - totalHeight) / 2) + yOffset;
+
+			int w1 = Raylib.MeasureText(line1, textSize);
+			int w2 = Raylib.MeasureText(line2, textSize);
+
+			int x1 = (int)(bounds.X + (bounds.Width - w1) / 2);
+			int x2 = (int)(bounds.X + (bounds.Width - w2) / 2);
+
+			Raylib.DrawText(line1, x1, startY, textSize, color);
+			Raylib.DrawText(line2, x2, startY + textSize, textSize, color);
 		}
 
 		public static Button CreateDefaultBtn(
